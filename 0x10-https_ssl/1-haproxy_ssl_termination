@@ -32,13 +32,18 @@ defaults
 	errorfile 502 /etc/haproxy/errors/502.http
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
-
+listen http-in
+	bind :80
+	balance roundrobin
+	server 75814-web-01 54.91.132.143:80 check
+	server 75814-web-02 54.86.52.2:80 check
 frontend myfrontend
 	bind *:80
-	bind *:443 ssl crt /etc/haproxy/certs/www.uniqueel.tech.pem
+	bind *:443 ssl crt /etc/haproxy/certs/www.uniquetech.tech.pem
+	http-request redirect scheme https code 301 if { hdr(Host) -i www.uniquetech.tech } !{ ssl_fc }
 	default_backend myservers
 
 backend myservers
 	balance roundrobin
-	server web-01 54.86.220.207:80 check
-	server web-02 54.175.137.217:80 check	
+	server web-01 52.91.132.143:80 check
+	server web-02 52.86.52.2:80 check
